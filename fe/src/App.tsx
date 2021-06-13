@@ -8,6 +8,7 @@ import Evaluate from './pages/evalute';
 import Movie from './pages/movie';
 import { Rating } from './components/common/rating';
 import styled from 'styled-components';
+import { KaKaoRedirect } from './components/redirect';
 
 function App() {
   const [score, setScore] = useState(0);
@@ -34,6 +35,7 @@ function App() {
         <Route path={'/movie/:movieId'}>
           <Movie />
         </Route>
+        <Route path="/auth/kakao/redirect" component={KaKaoRedirect} />
       </Switch>
     </>
   );
