@@ -14,7 +14,7 @@ const KaKaoRedirect = () => {
     let isCancelled = false;
     (async () => {
       const response = await axios.get(
-        `http:localhost:8081/auth/social/kakao?code=${query.get('code')}`
+        `http://localhost:8081/auth/social/kakao?code=${query.get('code')}`
       );
 
       if (!isCancelled) {
