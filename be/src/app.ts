@@ -1,5 +1,7 @@
+import "reflect-metadata";
 import express from "express";
-import { authRouter, baseRouter } from "./router";
+import authController from "./auth/auth.controller";
+import { baseRouter } from "./router";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -7,9 +9,8 @@ const app = express();
 
 app.use("/", baseRouter);
 
-app.use("/auth", authRouter);
+app.use("/auth", authController);
 
-// `auth/social/kakao?code=${query.get('code')
 app.listen(8081, () => {
   console.log("8081 port listening");
 });
