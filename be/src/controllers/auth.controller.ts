@@ -1,8 +1,9 @@
-import express, { query } from "express";
+import express from "express";
 import dotenv from "dotenv";
-import AuthServiceImpl from "./auth.service";
-import { AuthService } from "./interface/AuthService";
+import AuthServiceImpl from "../services/auth.service";
+import { AuthService } from "../services/interface/AuthService";
 import { Container } from "typedi";
+
 const router = express.Router();
 
 dotenv.config();

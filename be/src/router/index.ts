@@ -1,1 +1,1 @@
-export { default as baseRouter } from "./baseRouter";
+export { default as baseRouter } from "./base.route";

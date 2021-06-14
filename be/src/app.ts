@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import express from "express";
-import authController from "./auth/auth.controller";
+import authController from "./controllers/auth.controller";
 import { baseRouter } from "./router";
 import dotenv from "dotenv";
 
