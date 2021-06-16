@@ -4,6 +4,9 @@ import EvaluateProgressBar from './EvaluateProgressBar';
 import EvaluateMovieCardList from './EvaluateMovieCardList';
 import mediaQuery, { BreakPoint } from '../../styles/mediaQuery';
 import { useCallback, useState } from 'react';
+import { useQuery } from 'react-query';
+import { fetchUser, registerUserWithKaKao, signInUser } from '../../api/auth';
+import { fetchEvalMovie } from '../../api/movie';
 
 interface Movie {
   id: number;
@@ -15,6 +18,13 @@ interface EvaluatedMovie {
 }
 
 const EvaluateView = () => {
+  const {
+    isLoading: isUserLoading,
+    isError: isUserError,
+    data: userData,
+    error: userError,
+  } = useQuery('fetchUser', fetchUser);
+
   const [selected, setSelected] = useState(0);
 
   const [movieData, setMovieData] = useState<Movie[]>();
@@ -36,10 +46,27 @@ const EvaluateView = () => {
 
   const checkWatchList = useCallback((id: number) => {}, []);
 
+  const {
+    isLoading: isMoviesLoading,
+    isError: isMoviesError,
+    data,
+    error,
+  } = useQuery('movies', fetchEvalMovie);
+
+  if (isUserLoading || isMoviesLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isUserError || isMoviesError) {
+    return <span>Error: message</span>;
+  }
   return (
     <>
       <ProgressBarSection>
         <ProgressBarWrapper>
+          <ProgressBarDescriptionWrapper>
+            <ProgressBarCount>{selected}</ProgressBarCount>
+          </ProgressBarDescriptionWrapper>
           <EvaluateProgressBar
             animationSpeed={500}
             currentCount={selected}
@@ -49,6 +76,7 @@ const EvaluateView = () => {
       </ProgressBarSection>
       <GridView>
         <EvaluateMovieCardList
+          movies={data!.movie}
           scoreMovie={scoreMovie}
           checkWatchList={checkWatchList}
         />
@@ -75,6 +103,9 @@ const ProgressBarSection = styled.div`
 `;
 
 const ProgressBarWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   height: 100%;
   width: 100%;
   max-width: 680px;
@@ -82,6 +113,16 @@ const ProgressBarWrapper = styled.div`
   //background-color: #fff;
 `;
 
+const ProgressBarDescriptionWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+  margin-bottom: 1rem;
+`;
+const ProgressBarCount = styled.p`
+  font-size: 1.25rem;
+`;
 const GridView = styled.div`
   padding: calc(188px + 15px) 25px 15px;
 

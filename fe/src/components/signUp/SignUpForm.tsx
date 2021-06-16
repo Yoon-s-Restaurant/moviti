@@ -4,16 +4,35 @@ import { Input } from '../common/input';
 import { Button } from '../common/button';
 import styled from 'styled-components';
 import useInput from '../../hooks/useInput';
+import { useCallback, useState } from 'react';
+import { useMutation } from 'react-query';
+import { signUpUser } from '../../api/auth';
+import { SignUpPayload } from './type';
+import { validateSignUpPayload } from '../../utils';
 
 interface SignUpFormProps {
-  handleSubmit: () => void;
+  handleSignUp: ({ email, name, password }: SignUpPayload) => void;
 }
 
-const SignUpForm = ({ handleSubmit }: SignUpFormProps) => {
+const SignUpForm = ({ handleSignUp }: SignUpFormProps) => {
   const [name, onChangeName] = useInput('');
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
 
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  const handleSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
+      const isValid = validateSignUpPayload({ name, email, password });
+      if (isValid) {
+        handleSignUp({ email, name, password });
+      } else {
+        setValidationError('회원가입 양식이 잘못되었습니다.');
+      }
+    },
+    [name, email, password]
+  );
   return (
     <>
       <SignUpFormBlock>
@@ -57,10 +76,16 @@ const SignUpForm = ({ handleSubmit }: SignUpFormProps) => {
               />
             </div>
           </FormWrapper>
-          <Button color={'primary'} height={48} unit={'px'}>
+          <Button
+            onClick={handleSubmit}
+            color={'primary'}
+            height={48}
+            unit={'px'}
+          >
             회원가입
           </Button>
         </form>
+        {validationError && <div>{validationError}</div>}
       </SignUpFormBlock>
     </>
   );

@@ -18,7 +18,7 @@ const MovieDesc = ({
 }: MovieDescProps) => {
   return (
     <DescriptionWrapper>
-      <MovieTitle>gg</MovieTitle>
+      <MovieTitle>{movie.title}</MovieTitle>
       <Rating numberOfStar={5} onChange={onChange} score={score} />
       <DescriptionFooter>
         <FooterArea>

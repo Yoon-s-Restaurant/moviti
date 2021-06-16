@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import { useQuery } from 'react-query';
+import { signInUser } from '../../api/auth';
 
 const HomeView = () => {
   return (

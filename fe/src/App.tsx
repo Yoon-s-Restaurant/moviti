@@ -11,11 +11,6 @@ import styled from 'styled-components';
 import { KaKaoRedirect } from './components/redirect';
 
 function App() {
-  const [score, setScore] = useState(0);
-
-  const onChangeScore = useCallback((displayedScore) => {
-    setScore(displayedScore);
-  }, []);
   return (
     <>
       <GlobalStyle />

@@ -4,13 +4,24 @@ import styled from 'styled-components';
 import { Button } from '../common/button';
 import { Input } from '../common/input';
 import Label from '../common/input/Label';
+import { useCallback } from 'react';
+import { SignInPayload } from '../signUp/type';
 
 interface SignInFormProps {
-  handleSubmit: () => void;
+  handleSignIn: ({ email, password }: SignInPayload) => void;
 }
-const SignInForm = ({ handleSubmit }: SignInFormProps) => {
+const SignInForm = ({ handleSignIn }: SignInFormProps) => {
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
+
+  const handleSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
+
+      handleSignIn({ email, password });
+    },
+    [email, password]
+  );
   return (
     <>
       <SignInFormBlock>
