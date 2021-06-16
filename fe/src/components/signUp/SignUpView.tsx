@@ -1,11 +1,26 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import SignUpForm from './SignUpForm';
+import { useCallback } from 'react';
+import { useMutation } from 'react-query';
+import { SignUpPayload } from './type';
+import { signUpUser } from '../../api/auth';
 
 const SignUpView = () => {
+  const mutation = useMutation((signUpData: SignUpPayload) =>
+    signUpUser(signUpData)
+  );
+
+  const handleSignUp = useCallback(
+    ({ name, email, password }: SignUpPayload) => {
+      mutation.mutate({ name, email, password });
+    },
+    []
+  );
+
   return (
     <SignUpViewWrapper>
-      <SignUpForm handleSubmit={() => {}}></SignUpForm>
+      <SignUpForm handleSignUp={handleSignUp} />
     </SignUpViewWrapper>
   );
 };

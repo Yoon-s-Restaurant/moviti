@@ -1,16 +1,18 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import ThumbNail from './ThumbNail';
 import MovieDesc from './MovieDesc';
 import { useCallback, useRef, useState } from 'react';
 import useDescriptionHover from './hooks/useDescriptionHover';
+import { Movie } from './type';
 
 interface MovieCardProps {
-  movie: any;
+  movie: Movie;
   scoreMovie: (id: number, score: number) => void;
   checkWatchList: (id: number) => void;
 }
+
+// '/mv.jpg'
 
 const MovieCard = ({ movie, scoreMovie, checkWatchList }: MovieCardProps) => {
   const [hover, setHover, handleMouseOver, handleMouseLeave] =
@@ -35,7 +37,7 @@ const MovieCard = ({ movie, scoreMovie, checkWatchList }: MovieCardProps) => {
       onMouseOver={handleMouseOver}
       onMouseLeave={() => handleMouseLeave(score)}
     >
-      <ThumbNail src={'/mv.jpg'} />
+      <ThumbNail src={movie.src} />
       {hover && (
         <MovieDesc
           movie={movie}

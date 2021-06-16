@@ -3,6 +3,11 @@ import styled from 'styled-components';
 import SignInForm from './SignInForm';
 import { ReactComponent as KaKaoLogo } from 'assets/kakao.svg';
 import { useCallback } from 'react';
+import { SignInPayload } from '../signUp/type';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { fetchUser, signInUser } from '../../api/auth';
+import { Redirect } from 'react-router';
+import { retry } from '@reduxjs/toolkit/query';
 
 declare global {
   interface Window {
@@ -12,6 +17,17 @@ declare global {
 }
 
 const SignInView = () => {
+  const {
+    isLoading: isUserLoading,
+    isError: isUserError,
+    data: userData,
+    error: userError,
+    refetch,
+  } = useQuery('fetchUser', fetchUser, {
+    retry: false,
+  });
+
+  // 카카오 로그인 요청
   const handleKakaoLogin = useCallback(async () => {
     const kakao = window.Kakao;
     kakao.init('8ebbe34966c8c4dd663c43d421f56e16');
@@ -22,13 +38,26 @@ const SignInView = () => {
     }
   }, []);
 
+  const mutation = useMutation('signIn', {
+    onMutate: (signInData: SignInPayload) => signInUser(signInData),
+    onSuccess: (data, variables, context) => refetch(),
+  });
+
+  const handleSignIn = ({ email, password }: SignInPayload) => {
+    mutation.mutate({ email, password });
+  };
+
+  if (userData) {
+    return <Redirect to={'/evaluate'} />;
+  }
+
   return (
     <SignInViewWrapper>
       <FormWrapper>
-        <SignInForm handleSubmit={() => {}}></SignInForm>
+        <SignInForm handleSignIn={handleSignIn} />
       </FormWrapper>
       <div onClick={handleKakaoLogin}>
-        <KaKaoLogo></KaKaoLogo>
+        <KaKaoLogo />
       </div>
     </SignInViewWrapper>
   );

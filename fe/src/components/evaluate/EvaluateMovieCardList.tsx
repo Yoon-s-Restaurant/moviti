@@ -2,29 +2,30 @@ import * as React from 'react';
 import styled from 'styled-components';
 import mediaQuery, { BreakPoint } from '../../styles/mediaQuery';
 import MovieCard from './MovieCard';
+import { Movie } from './type';
 
 interface EvaluateMovieCardListProps {
+  movies: Movie[];
   scoreMovie: (id: number, score: number) => void;
   checkWatchList: (id: number) => void;
 }
 
 const EvaluateMovieCardList = ({
+  movies,
   scoreMovie,
   checkWatchList,
 }: EvaluateMovieCardListProps) => {
   return (
     <MovieCardList>
-      {Array(100)
-        .fill(0)
-        .map((item, idx) => (
-          <MovieCardItem key={idx}>
-            <MovieCard
-              movie={item}
-              scoreMovie={scoreMovie}
-              checkWatchList={checkWatchList}
-            />
-          </MovieCardItem>
-        ))}
+      {movies.map((movie, idx) => (
+        <MovieCardItem key={idx}>
+          <MovieCard
+            movie={movie}
+            scoreMovie={scoreMovie}
+            checkWatchList={checkWatchList}
+          />
+        </MovieCardItem>
+      ))}
     </MovieCardList>
   );
 };

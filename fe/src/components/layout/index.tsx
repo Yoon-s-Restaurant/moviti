@@ -23,7 +23,7 @@ const LayoutWrapper = styled.div`
   min-height: 100vh;
 `;
 const HeaderBlock = styled.header`
-  background-color: transparent;
+  background-color: #1e1f21;
   position: fixed;
   height: 68px;
   width: 100%;
