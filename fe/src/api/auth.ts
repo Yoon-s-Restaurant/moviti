@@ -9,7 +9,7 @@ export const registerUserWithKaKao = async ({ queryKey }: any) => {
 
 // accessToken 가지고... 유저 정보 가져오기
 export const fetchUser = async () => {
-  const { data } = await movitiApi.get('user', {
+  const { data } = await movitiApi.get('/auth/user', {
     headers: {
       Authorization: localStorage.getItem('token') || '',
     },
@@ -18,19 +18,19 @@ export const fetchUser = async () => {
 };
 // 로그인?
 export const signInUser = ({ email, password }: SignInPayload) =>
-  movitiApi.post('/user/signIn', {
+  movitiApi.post('/auth/login', {
     email,
     password,
   });
 
 export const signOutUser = async () => {
-  const { data } = await movitiApi.post('/user/signOut');
+  const { data } = await movitiApi.post('/auth/logout');
 
   return data;
 };
 
 export const signUpUser = ({ name, email, password }: SignUpPayload) =>
-  movitiApi.post('/user/signUp', {
+  movitiApi.post('/auth/register', {
     name,
     email,
     password,
