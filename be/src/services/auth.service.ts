@@ -2,12 +2,15 @@ import axios from "axios";
 import querystring from "querystring";
 import { AuthService } from "./interface/AuthService";
 import { Service } from "typedi";
-import AuthRepository from "../repos/auth.repository";
 import UrlEnum from "../utils/url.enum";
+import bcrypt from "bcrypt";
+import { AuthRepository } from "../repos/auth.repository";
+import { getCustomRepository } from "typeorm";
+
+const saltRounds = 10;
 
 @Service()
 class AuthServiceImpl implements AuthService {
-  constructor(private authRepository: AuthRepository) {}
   async getToken(authCode: string) {
     const { data } = await axios.post(
       UrlEnum.URL_TOKEN,
@@ -40,6 +43,32 @@ class AuthServiceImpl implements AuthService {
       }
     );
     return data;
+  }
+
+  async getHashedPassword(name: string, email: string, password: string) {
+    const authRepository: AuthRepository = getCustomRepository(AuthRepository);
+
+    bcrypt.genSalt(saltRounds, async (err, salt) => {
+      if (err) {
+        return {
+          register: false,
+          message: "비밀번호 암호화에 실패했습니다.",
+        };
+      }
+      bcrypt.hash(password, salt, async (err, hash) => {
+        if (err) {
+          return {
+            register: false,
+            message: "비밀번호 암호화에 실패했습니다.",
+          };
+        }
+
+        password = hash;
+
+        console.log(name, email, password);
+        await authRepository.createUser(name, email, password);
+      });
+    });
   }
 }
 
