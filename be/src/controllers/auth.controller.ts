@@ -39,7 +39,7 @@ createConnection()
           return res.status(400).json({ message: ResEnum.RES_NO_DATA });
         }
         if (await authServiceInstance.checkDupeUser(email)) {
-          return res.status(200).json({ message: ResEnum.RES_DUPE_USER });
+          return res.status(400).json({ message: ResEnum.RES_DUPE_USER });
         }
         await authServiceInstance.registerUser(name, email, password);
         return res.status(200).json({ message: ResEnum.RES_REGISTER_OK });
