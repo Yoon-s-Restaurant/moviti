@@ -36,9 +36,8 @@ router.get("/social/kakao", async (req, res) => {
 createConnection()
   .then((connection) => {
     connection.getCustomRepository(AuthRepository);
-
+    const authServiceInstance: AuthService = Container.get(AuthServiceImpl);
     router.post("/register", async (req, res) => {
-      const authServiceInstance: AuthService = Container.get(AuthServiceImpl);
       //eslint-disable-next-line prefer-const
       let { name, email, password } = req.body;
       try {
@@ -55,6 +54,23 @@ createConnection()
           password
         );
         return res.status(200).json({ message: ResEnum.RES_REGISTER_OK });
+      } catch (e) {
+        res.status(400).json({ message: ResEnum.RES_FAIL + e.message });
+      }
+    });
+
+    router.post("/login", async (req, res) => {
+      const { email, password } = req.body;
+      try {
+        const login = await authServiceInstance.loginUser(
+          email,
+          ReqEnum.REQ_TYPE_LOCAL,
+          password
+        );
+        if (!login) {
+          return res.status(400).json({ message: ResEnum.RES_NO_USER });
+        }
+        return res.status(200).json({ message: ResEnum.RES_SUCCESS });
       } catch (e) {
         res.status(400).json({ message: ResEnum.RES_FAIL + e.message });
       }

@@ -7,6 +7,8 @@ import bcrypt from "bcrypt";
 import { AuthRepository } from "../repos/auth.repository";
 import { getCustomRepository } from "typeorm";
 import ReqEnum from "../utils/req.enum";
+import { User } from "../models/auth.model";
+import ResEnum from "../utils/res.enum";
 
 const saltRounds = 10;
 
@@ -71,6 +73,33 @@ class AuthServiceImpl implements AuthService {
   async checkDupeUser(email: string): Promise<boolean> {
     const joinedEmail = (await this.authRepository.findByEmail(email))?.email;
     return joinedEmail !== undefined;
+  }
+
+  async findUser(email: string): Promise<User | string> {
+    const registeredUser: User | undefined =
+      await this.authRepository.findByEmail(email);
+    if (registeredUser !== undefined) {
+      return registeredUser;
+    } else {
+      return ResEnum.RES_NO_USER;
+    }
+  }
+
+  async loginUser(
+    email: string,
+    type: string,
+    password?: string
+  ): Promise<boolean> {
+    const user: User | string = await this.findUser(email);
+    let result = false;
+    if (typeof user === "object") {
+      if (type === ReqEnum.REQ_TYPE_LOCAL && password !== undefined) {
+        result = await bcrypt.compare(password, user.password);
+      } else if (type === ReqEnum.REQ_TYPE_KAKAO) {
+        result = true;
+      }
+    }
+    return result;
   }
 }
 
