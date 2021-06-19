@@ -1,9 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import SignUpForm from './SignUpForm';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useMutation } from 'react-query';
-import { SignUpPayload } from './type';
+import { SignUpPayload } from './types';
 import { signUpUser } from '../../api/auth';
 
 const SignUpView = () => {
@@ -15,12 +15,22 @@ const SignUpView = () => {
     ({ name, email, password }: SignUpPayload) => {
       mutation.mutate({ name, email, password });
     },
-    []
+    [mutation]
   );
+
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleError = useCallback((message: string) => {
+    setErrorMessage(message);
+  }, []);
 
   return (
     <SignUpViewWrapper>
-      <SignUpForm handleSignUp={handleSignUp} />
+      <SignUpForm
+        handleSignUp={handleSignUp}
+        errorMessage={errorMessage}
+        handleError={handleError}
+      />
     </SignUpViewWrapper>
   );
 };

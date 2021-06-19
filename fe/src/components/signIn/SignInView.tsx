@@ -3,11 +3,10 @@ import styled from 'styled-components';
 import SignInForm from './SignInForm';
 import { ReactComponent as KaKaoLogo } from 'assets/kakao.svg';
 import { useCallback } from 'react';
-import { SignInPayload } from '../signUp/type';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { fetchUser, signInUser } from '../../api/auth';
 import { Redirect } from 'react-router';
-import { retry } from '@reduxjs/toolkit/query';
+import { SignInPayload } from './types';
 
 declare global {
   interface Window {

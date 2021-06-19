@@ -4,8 +4,9 @@ import styled from 'styled-components';
 import { Button } from '../common/button';
 import { Input } from '../common/input';
 import Label from '../common/input/Label';
-import { useCallback } from 'react';
-import { SignInPayload } from '../signUp/type';
+import { useCallback, useState } from 'react';
+import { SignInPayload } from './types';
+import { validateSignInPayload } from '../../utils';
 
 interface SignInFormProps {
   handleSignIn: ({ email, password }: SignInPayload) => void;
@@ -13,14 +14,19 @@ interface SignInFormProps {
 const SignInForm = ({ handleSignIn }: SignInFormProps) => {
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = useCallback(
     (e) => {
       e.preventDefault();
-
-      handleSignIn({ email, password });
+      try {
+        validateSignInPayload({ email, password });
+        handleSignIn({ email, password });
+      } catch (e) {
+        setErrorMessage(e.message);
+      }
     },
-    [email, password]
+    [email, password, handleSignIn]
   );
   return (
     <>
@@ -53,7 +59,8 @@ const SignInForm = ({ handleSignIn }: SignInFormProps) => {
               />
             </div>
           </FormWrapper>
-          <Button color={'primary'} height={48} unit={'px'}>
+          <ErrorMessage>{errorMessage}</ErrorMessage>
+          <Button type={'submit'} color={'primary'} height={48} unit={'px'}>
             로그인
           </Button>
         </form>
@@ -82,4 +89,9 @@ const FormWrapper = styled.div`
 
 const InputWrapper = styled.div`
   border-bottom: 1px solid lightgray;
+`;
+
+const ErrorMessage = styled.p`
+  color: red;
+  margin-bottom: 1.5em;
 `;
