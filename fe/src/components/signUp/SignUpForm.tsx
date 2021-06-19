@@ -33,7 +33,7 @@ const SignUpForm = ({
         handleError(e.message);
       }
     },
-    [name, email, password, handleSignUp]
+    [name, email, password, handleSignUp, handleError]
   );
   return (
     <>
