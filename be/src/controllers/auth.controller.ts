@@ -20,17 +20,7 @@ router.get("/social/kakao", async (req, res) => {
   }
 });
 
-createConnection({
-  type: "mysql",
-  host: ,
-  port: 3306,
-  username: "admin",
-  password: ,
-  database: "moviti",
-  synchronize: false,
-  entities: ["src/models/*.ts"],
-  logging: false,
-})
+createConnection()
   .then((connection) => {
     connection.getCustomRepository(AuthRepository);
     router.post("/register", async (req, res) => {
@@ -43,7 +33,7 @@ createConnection({
         return res.status(400).json({ message: "정보를 입력하세요!" });
       }
       try {
-        await authServiceInstance.getHashedPassword(name, email, password);
+        await authServiceInstance.registerUser(name, email, password);
       } catch (e) {
         res.status(400).json({ message: "회원가입에 실패했습니다!" + e });
       }

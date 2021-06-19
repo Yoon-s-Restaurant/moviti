@@ -29,6 +29,7 @@ class AuthServiceImpl implements AuthService {
 
     return data;
   }
+
   async getUser(accessToken: string) {
     const { data } = await axios.post(
       UrlEnum.URL_USER,
@@ -45,30 +46,15 @@ class AuthServiceImpl implements AuthService {
     return data;
   }
 
-  async getHashedPassword(name: string, email: string, password: string) {
+  async getHashedPassword(password: string) {
+    const salt = await bcrypt.genSalt(saltRounds);
+    return await bcrypt.hash(password, salt);
+  }
+
+  async registerUser(name: string, email: string, password: string) {
     const authRepository: AuthRepository = getCustomRepository(AuthRepository);
-
-    bcrypt.genSalt(saltRounds, async (err, salt) => {
-      if (err) {
-        return {
-          register: false,
-          message: "비밀번호 암호화에 실패했습니다.",
-        };
-      }
-      bcrypt.hash(password, salt, async (err, hash) => {
-        if (err) {
-          return {
-            register: false,
-            message: "비밀번호 암호화에 실패했습니다.",
-          };
-        }
-
-        password = hash;
-
-        console.log(name, email, password);
-        await authRepository.createUser(name, email, password);
-      });
-    });
+    const hashedPassword = this.getHashedPassword(password);
+    await authRepository.createUser(name, email, await hashedPassword);
   }
 }
 
