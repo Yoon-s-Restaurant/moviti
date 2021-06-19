@@ -19,7 +19,7 @@
 .env.test.local
 .env.production.local
 
-ormconfig.yml
+ormconfig.json
 *.yml
 
 npm-debug.log*

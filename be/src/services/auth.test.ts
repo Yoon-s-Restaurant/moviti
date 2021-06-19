@@ -4,10 +4,10 @@ import { Test } from "../models/test.model";
 beforeEach(() => {
   return createConnection({
     type: "mysql",
-    host: ,
+    host: "",
     port: 3306,
     username: "admin",
-    password:,
+    password: "",
     database: "moviti",
     synchronize: false,
     entities: ["src/models/*.ts"],

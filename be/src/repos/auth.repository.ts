@@ -14,4 +14,12 @@ export class AuthRepository extends Repository<User> {
       })
       .execute();
   }
+
+  findByEmail(email: string) {
+    return this.createQueryBuilder("findUser")
+      .select("user")
+      .from(User, "user")
+      .where("user.email = :email", { email: email })
+      .getOne();
+  }
 }

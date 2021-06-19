@@ -11,6 +11,8 @@ const saltRounds = 10;
 
 @Service()
 class AuthServiceImpl implements AuthService {
+  authRepository: AuthRepository = getCustomRepository(AuthRepository);
+
   async getToken(authCode: string) {
     const { data } = await axios.post(
       UrlEnum.URL_TOKEN,
@@ -29,6 +31,7 @@ class AuthServiceImpl implements AuthService {
 
     return data;
   }
+
   async getUser(accessToken: string) {
     const { data } = await axios.post(
       UrlEnum.URL_USER,
@@ -45,30 +48,19 @@ class AuthServiceImpl implements AuthService {
     return data;
   }
 
-  async getHashedPassword(name: string, email: string, password: string) {
-    const authRepository: AuthRepository = getCustomRepository(AuthRepository);
+  async getHashedPassword(password: string) {
+    const salt = await bcrypt.genSalt(saltRounds);
+    return await bcrypt.hash(password, salt);
+  }
 
-    bcrypt.genSalt(saltRounds, async (err, salt) => {
-      if (err) {
-        return {
-          register: false,
-          message: "비밀번호 암호화에 실패했습니다.",
-        };
-      }
-      bcrypt.hash(password, salt, async (err, hash) => {
-        if (err) {
-          return {
-            register: false,
-            message: "비밀번호 암호화에 실패했습니다.",
-          };
-        }
+  async registerUser(name: string, email: string, password: string) {
+    const hashedPassword = await this.getHashedPassword(password);
+    await this.authRepository.createUser(name, email, hashedPassword);
+  }
 
-        password = hash;
-
-        console.log(name, email, password);
-        await authRepository.createUser(name, email, password);
-      });
-    });
+  async checkDupeUser(email: string): Promise<boolean> {
+    const joinedEmail = (await this.authRepository.findByEmail(email))?.email;
+    return joinedEmail !== undefined;
   }
 }
 
