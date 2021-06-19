@@ -23,12 +23,4 @@ export class AuthRepository extends Repository<User> {
       .where("user.email = :email", { email: email })
       .getOne();
   }
-  // findByEmailPassword(email: string, password: string) {
-  //   return this.createQueryBuilder("findByEmailPassword")
-  //     .select("user")
-  //     .from(User, "user")
-  //     .where("user.email = :email", { email: email })
-  //     .andWhere("user.password = :password", { password: password })
-  //     .getOne();
-  // }
 }

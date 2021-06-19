@@ -9,7 +9,11 @@ import { getCustomRepository } from "typeorm";
 import ReqEnum from "../utils/req.enum";
 import { User } from "../models/auth.model";
 import ResEnum from "../utils/res.enum";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
+dotenv.config();
+const jwtSecretKey = process.env.JWT_SECRET as string;
 const saltRounds = 10;
 
 @Service()
@@ -70,7 +74,7 @@ class AuthServiceImpl implements AuthService {
     }
   }
 
-  async checkDupeUser(email: string): Promise<boolean> {
+  async checkUser(email: string): Promise<boolean> {
     const joinedEmail = (await this.authRepository.findByEmail(email))?.email;
     return joinedEmail !== undefined;
   }
@@ -100,6 +104,17 @@ class AuthServiceImpl implements AuthService {
       }
     }
     return result;
+  }
+
+  async generateToken(user: User): Promise<string> {
+    const { name, email, type } = user;
+    return jwt.sign({ name, email, type }, jwtSecretKey, {
+      expiresIn: "1d",
+    });
+  }
+
+  async decodeToken(token: string, email: string) {
+    return jwt.verify(token, jwtSecretKey);
   }
 }
 

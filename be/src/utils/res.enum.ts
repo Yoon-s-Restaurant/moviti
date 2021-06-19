@@ -6,6 +6,8 @@ enum ResEnum {
 
   RES_FAIL = "요청이 실패했습니다.",
   RES_SUCCESS = "요청이 성공했습니다.",
+
+  RES_TOKEN_EXPIRED = "토큰이 만료되었습니다.",
 }
 
 export default ResEnum;

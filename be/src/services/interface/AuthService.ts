@@ -10,7 +10,13 @@ export interface AuthService {
     type: string,
     password?: string
   ) => Promise<any>;
-  checkDupeUser: (email: string) => Promise<boolean>;
+  checkUser: (email: string) => Promise<boolean>;
   findUser: (email: string) => Promise<User | string>;
-  loginUser(email: string, type: string, password?: string): Promise<boolean>;
+  loginUser: (
+    email: string,
+    type: string,
+    password?: string
+  ) => Promise<boolean>;
+  generateToken: (user: User) => Promise<string>;
+  decodeToken: (token: string, email: string) => Promise<any>;
 }
