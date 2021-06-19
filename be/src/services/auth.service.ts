@@ -6,6 +6,7 @@ import UrlEnum from "../utils/url.enum";
 import bcrypt from "bcrypt";
 import { AuthRepository } from "../repos/auth.repository";
 import { getCustomRepository } from "typeorm";
+import ReqEnum from "../utils/req.enum";
 
 const saltRounds = 10;
 
@@ -53,9 +54,18 @@ class AuthServiceImpl implements AuthService {
     return await bcrypt.hash(password, salt);
   }
 
-  async registerUser(name: string, email: string, password: string) {
-    const hashedPassword = await this.getHashedPassword(password);
-    await this.authRepository.createUser(name, email, hashedPassword);
+  async registerUser(
+    name: string,
+    email: string,
+    type: string,
+    password?: string
+  ) {
+    if (type === ReqEnum.REQ_TYPE_LOCAL && password !== undefined) {
+      const hashedPassword = await this.getHashedPassword(password);
+      await this.authRepository.createUser(name, email, type, hashedPassword);
+    } else if (type === ReqEnum.REQ_TYPE_KAKAO) {
+      await this.authRepository.createUser(name, email, type);
+    }
   }
 
   async checkDupeUser(email: string): Promise<boolean> {
