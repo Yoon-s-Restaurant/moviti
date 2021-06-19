@@ -11,6 +11,8 @@ const saltRounds = 10;
 
 @Service()
 class AuthServiceImpl implements AuthService {
+  authRepository: AuthRepository = getCustomRepository(AuthRepository);
+
   async getToken(authCode: string) {
     const { data } = await axios.post(
       UrlEnum.URL_TOKEN,
@@ -52,9 +54,13 @@ class AuthServiceImpl implements AuthService {
   }
 
   async registerUser(name: string, email: string, password: string) {
-    const authRepository: AuthRepository = getCustomRepository(AuthRepository);
-    const hashedPassword = this.getHashedPassword(password);
-    await authRepository.createUser(name, email, await hashedPassword);
+    const hashedPassword = await this.getHashedPassword(password);
+    await this.authRepository.createUser(name, email, hashedPassword);
+  }
+
+  async checkDupeUser(email: string): Promise<boolean> {
+    const joinedEmail = (await this.authRepository.findByEmail(email))?.email;
+    return joinedEmail !== undefined;
   }
 }
 
