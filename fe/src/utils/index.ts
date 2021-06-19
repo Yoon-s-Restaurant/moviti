@@ -1,1 +1,1 @@
-export { default as validateSignUpPayload } from './validation';
+export { validateSignUpPayload, validateSignInPayload } from './validation';

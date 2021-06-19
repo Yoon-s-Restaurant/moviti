@@ -1,5 +1,6 @@
 import movitiApi from './config';
-import { SignInPayload, SignUpPayload } from '../components/signUp/type';
+import { SignUpPayload } from '../components/signUp/types';
+import { SignInPayload } from '../components/signIn/types';
 
 export const registerUserWithKaKao = async ({ queryKey }: any) => {
   const [_, { authCode }] = queryKey;

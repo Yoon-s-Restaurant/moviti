@@ -1,21 +1,39 @@
-import { SignUpPayload } from '../components/signUp/type';
+import { SignUpPayload } from '../components/signUp/types';
+import Regex from './regex';
+import { SignInPayload } from '../components/signIn/types';
 
-export default ({ name, email, password }: SignUpPayload) => {
+const validateSignUpPayload = ({ name, email, password }: SignUpPayload) => {
   const isValidName = validateName(name);
-  const isValidEmail = validateEmail(email);
   const isValidPassword = validatePassword(password);
-
-  return isValidName && isValidEmail && isValidPassword;
+  return isValidName && isValidPassword;
 };
 
+const validateSignInPayload = ({ email, password }: SignInPayload) => {
+  const isValidPassword = validatePassword(password);
+  return isValidPassword;
+};
 const validateName = (name: string) => {
-  return true;
+  if (name.length > 2) {
+    return true;
+  } else {
+    throw new Error('이름 양식을 확인해주세요');
+  }
 };
 
 const validateEmail = (email: string) => {
-  return true;
+  if (Regex.email.test(email)) {
+    return true;
+  } else {
+    throw new Error('Email 양식을 확인해주세요.');
+  }
 };
 
 const validatePassword = (password: string) => {
-  return true;
+  if (Regex.password.test(password)) {
+    return true;
+  } else {
+    throw new Error('비밀번호 양식을 확인해주세요');
+  }
 };
+
+export { validateSignInPayload, validateSignUpPayload };

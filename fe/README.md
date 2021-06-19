@@ -44,3 +44,48 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+
+```typescript
+
+// auth.controller.ts
+router.get("/social/kakao", (req, res) => {
+  
+    
+    // 4. 아래 4번과 동일 
+})
+
+router.post("/login", (req, res) => {
+    // 로그인 로직
+    
+    // 1. DB에서 확인 
+    
+    // 2. DB에 저장 
+    
+    // 3. 토큰 생성
+    const refreshToken = createRefreshToken();
+    const accessToken = createAccessToken();
+    
+    // 4. refreshToken, accessToken  반환
+    res.cookie("refreshToken" , refreshToken);
+    res.json({
+        accessToken
+    })
+
+})
+
+// user.controller.ts
+
+router.get("/user", (req,res) =>{ 
+    
+    // accessToken을 헤더에서 가져와서, decoding
+    try {
+        req.decoded = jwt.verify(req.headers.authorization, 'secretKey');
+        res.json ( {
+          email: req.decoded.id,
+          name: req.decoded.name  
+        })
+    }catch(e) {
+        // 에러 처리, 토큰 만료 혹은 유효하지 않은 토큰 
+    }})
+```

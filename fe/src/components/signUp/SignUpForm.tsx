@@ -5,33 +5,35 @@ import { Button } from '../common/button';
 import styled from 'styled-components';
 import useInput from '../../hooks/useInput';
 import { useCallback, useState } from 'react';
-import { useMutation } from 'react-query';
-import { signUpUser } from '../../api/auth';
-import { SignUpPayload } from './type';
+import { SignUpPayload } from './types';
 import { validateSignUpPayload } from '../../utils';
 
 interface SignUpFormProps {
   handleSignUp: ({ email, name, password }: SignUpPayload) => void;
+  handleError: (message: string) => void;
+  errorMessage: string | null;
 }
 
-const SignUpForm = ({ handleSignUp }: SignUpFormProps) => {
+const SignUpForm = ({
+  handleSignUp,
+  handleError,
+  errorMessage,
+}: SignUpFormProps) => {
   const [name, onChangeName] = useInput('');
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
 
-  const [validationError, setValidationError] = useState<string | null>(null);
-
   const handleSubmit = useCallback(
     (e) => {
       e.preventDefault();
-      const isValid = validateSignUpPayload({ name, email, password });
-      if (isValid) {
+      try {
+        validateSignUpPayload({ name, email, password });
         handleSignUp({ email, name, password });
-      } else {
-        setValidationError('회원가입 양식이 잘못되었습니다.');
+      } catch (e) {
+        handleError(e.message);
       }
     },
-    [name, email, password]
+    [name, email, password, handleSignUp, handleError]
   );
   return (
     <>
@@ -71,21 +73,16 @@ const SignUpForm = ({ handleSignUp }: SignUpFormProps) => {
                 serial={'lower'}
                 value={password}
                 onChange={onChangePassword}
-                placeholder={'영문, 숫자, 특수문자 조합 10자 이상'}
+                placeholder={'영문, 숫자 조합 8자 이상'}
                 autoComplete={'off'}
               />
             </div>
           </FormWrapper>
-          <Button
-            onClick={handleSubmit}
-            color={'primary'}
-            height={48}
-            unit={'px'}
-          >
+          {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+          <Button type={'submit'} color={'primary'} height={48} unit={'px'}>
             회원가입
           </Button>
         </form>
-        {validationError && <div>{validationError}</div>}
       </SignUpFormBlock>
     </>
   );
@@ -110,4 +107,9 @@ const FormWrapper = styled.div`
 
 const InputWrapper = styled.div`
   border-bottom: 1px solid lightgray;
+`;
+
+const ErrorMessage = styled.div`
+  color: red;
+  margin-bottom: 1em;
 `;
