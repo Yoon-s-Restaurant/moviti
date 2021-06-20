@@ -6,7 +6,7 @@ interface UserProfileProps {
   userData: UserData;
 }
 const UserProfile = ({ userData }: UserProfileProps) => {
-  return <UserName>{userData}</UserName>;
+  return <UserName>{userData.email}</UserName>;
 };
 
 export default UserProfile;
