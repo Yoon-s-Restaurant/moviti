@@ -26,10 +26,10 @@ const Evaluate = () => {
       <Layout
         header={
           <Header>
-            <UserProfile userData={userData!} />
+            <UserProfile userData={userData!.user} />
           </Header>
         }
-        main={<EvaluateView userData={userData!} />}
+        main={<EvaluateView userData={userData!.user} />}
       />
     </>
   );
