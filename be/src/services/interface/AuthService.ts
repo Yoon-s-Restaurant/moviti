@@ -12,11 +12,8 @@ export interface AuthService {
   ) => Promise<any>;
   checkUser: (email: string) => Promise<boolean>;
   findUser: (email: string) => Promise<User | string>;
-  loginUser: (
-    email: string,
-    type: string,
-    password?: string
-  ) => Promise<string>;
-  generateToken: (user: User) => Promise<string>;
+  loginUser: (email: string, type: string, password?: string) => Promise<any>;
+  generateToken: (user: User, expireIn: string) => Promise<string>;
   decodeToken: (token: string, email: string) => Promise<any>;
+  generateRefreshToken: (user: User) => Promise<any>;
 }

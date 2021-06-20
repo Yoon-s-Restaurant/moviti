@@ -16,4 +16,7 @@ export class User extends BaseEntity {
 
   @Column({ name: "type" })
   type!: string;
+
+  @Column({ name: "refresh_token" })
+  refreshToken!: string;
 }

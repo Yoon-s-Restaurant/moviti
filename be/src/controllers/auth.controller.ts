@@ -7,6 +7,7 @@ import { createConnection } from "typeorm";
 import { AuthRepository } from "../repos/auth.repository";
 import ResEnum from "../utils/res.enum";
 import ReqEnum from "../utils/req.enum";
+import { User } from "../models/auth.model";
 
 dotenv.config();
 const router = express.Router();
@@ -24,14 +25,14 @@ createConnection()
         const userName = user.kakao_account.profile.nickname;
         console.log(user);
         if (await authServiceInstance.checkUser(userEmail)) {
-          const loginToken = await authServiceInstance.loginUser(
-            userEmail,
-            ReqEnum.REQ_TYPE_KAKAO
-          );
-          console.log(loginToken);
-          return res.status(200).json({
+          const { accessToken, refreshToken } =
+            await authServiceInstance.loginUser(
+              userEmail,
+              ReqEnum.REQ_TYPE_KAKAO
+            );
+          return res.status(200).cookie("refreshToken", refreshToken).json({
             message: ResEnum.RES_SUCCESS,
-            token: loginToken,
+            token: accessToken,
           });
         }
         await authServiceInstance.registerUser(
@@ -71,14 +72,15 @@ createConnection()
     router.post("/login", async (req, res) => {
       const { email, password } = req.body;
       try {
-        const loginToken = await authServiceInstance.loginUser(
-          email,
-          ReqEnum.REQ_TYPE_LOCAL,
-          password
-        );
-        return res.status(200).json({
+        const { accessToken, refreshToken } =
+          await authServiceInstance.loginUser(
+            email,
+            ReqEnum.REQ_TYPE_LOCAL,
+            password
+          );
+        return res.status(200).cookie("refreshToken", refreshToken).json({
           message: ResEnum.RES_SUCCESS,
-          token: loginToken,
+          token: accessToken,
         });
       } catch (e) {
         res.status(400).json({ message: e.message });

@@ -93,7 +93,7 @@ class AuthServiceImpl implements AuthService {
     email: string,
     type: string,
     password?: string
-  ): Promise<string> {
+  ): Promise<any> {
     const user: User | string = (await this.findUser(email)) as User;
     let login = false;
 
@@ -103,17 +103,30 @@ class AuthServiceImpl implements AuthService {
       login = true;
     }
     if (login) {
-      return await this.generateToken(user);
+      return {
+        accessToken: await this.generateToken(user, ReqEnum.REQ_ACCESS_TOKEN),
+        refreshToken: await this.generateRefreshToken(user),
+      };
     } else {
       throw new Error(ResEnum.RES_NO_USER);
     }
   }
 
-  async generateToken(user: User): Promise<string> {
+  async generateToken(user: User, expireIn: string): Promise<string> {
     const { name, email, type } = user;
     return jwt.sign({ name, email, type }, jwtSecretKey, {
-      expiresIn: "1d",
+      expiresIn: expireIn,
     });
+  }
+
+  async generateRefreshToken(user: User): Promise<any> {
+    const { email } = user;
+    const refreshToken = await this.generateToken(
+      user,
+      ReqEnum.REQ_REFRESH_TOKEN
+    );
+    await this.authRepository.updateRefreshToken(email, refreshToken);
+    return refreshToken;
   }
 
   async decodeToken(token: string, email: string) {

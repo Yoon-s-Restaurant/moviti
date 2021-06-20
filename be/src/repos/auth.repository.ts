@@ -23,4 +23,15 @@ export class AuthRepository extends Repository<User> {
       .where("user.email = :email", { email: email })
       .getOne();
   }
+
+  async updateRefreshToken(email: string, refreshToken: string) {
+    console.log("update", email, refreshToken);
+    return this.createQueryBuilder("updateRefreshToken")
+      .update(User)
+      .set({
+        refreshToken: refreshToken,
+      })
+      .where("email = :email", { email: email })
+      .execute();
+  }
 }
