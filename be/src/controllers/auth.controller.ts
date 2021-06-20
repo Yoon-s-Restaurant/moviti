@@ -88,7 +88,7 @@ createConnection()
     router.get("/user", async (req, res) => {
       try {
         const { name, email } = await authServiceInstance.decodeToken(
-          req.header("access-token") as string,
+          req.header("Authorization") as string,
           req.body.email
         );
         return res
