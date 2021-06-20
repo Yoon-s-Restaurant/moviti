@@ -7,7 +7,6 @@ import { createConnection } from "typeorm";
 import { AuthRepository } from "../repos/auth.repository";
 import ResEnum from "../utils/res.enum";
 import ReqEnum from "../utils/req.enum";
-import { User } from "../models/auth.model";
 
 dotenv.config();
 const router = express.Router();
@@ -25,8 +24,15 @@ createConnection()
         const userName = user.kakao_account.profile.nickname;
         console.log(user);
         if (await authServiceInstance.checkUser(userEmail)) {
-          authServiceInstance.loginUser;
-          return res.status(400).json({ message: ResEnum.RES_DUPE_USER });
+          const loginToken = await authServiceInstance.loginUser(
+            userEmail,
+            ReqEnum.REQ_TYPE_KAKAO
+          );
+          console.log(loginToken);
+          return res.status(200).json({
+            message: ResEnum.RES_SUCCESS,
+            token: loginToken,
+          });
         }
         await authServiceInstance.registerUser(
           userName,
@@ -35,7 +41,7 @@ createConnection()
         );
         return res.status(200).json({ message: ResEnum.RES_REGISTER_OK });
       } catch (e) {
-        return res.status(400).json({ message: ResEnum.RES_FAIL });
+        return res.status(400).json({ message: e.message });
       }
     });
 
@@ -65,22 +71,17 @@ createConnection()
     router.post("/login", async (req, res) => {
       const { email, password } = req.body;
       try {
-        const login = await authServiceInstance.loginUser(
+        const loginToken = await authServiceInstance.loginUser(
           email,
           ReqEnum.REQ_TYPE_LOCAL,
           password
         );
-        if (!login) {
-          return res.status(400).json({ message: ResEnum.RES_NO_USER });
-        }
-        // const user = await authServiceInstance.findUser(email);
-        const user = (await authServiceInstance.findUser(email)) as User;
         return res.status(200).json({
           message: ResEnum.RES_SUCCESS,
-          token: await authServiceInstance.generateToken(user),
+          token: loginToken,
         });
       } catch (e) {
-        res.status(400).json({ message: ResEnum.RES_FAIL + e.message });
+        res.status(400).json({ message: e.message });
       }
     });
 

@@ -85,7 +85,7 @@ class AuthServiceImpl implements AuthService {
     if (registeredUser !== undefined) {
       return registeredUser;
     } else {
-      return ResEnum.RES_NO_USER;
+      throw new Error(ResEnum.RES_NO_USER);
     }
   }
 
@@ -93,17 +93,20 @@ class AuthServiceImpl implements AuthService {
     email: string,
     type: string,
     password?: string
-  ): Promise<boolean> {
-    const user: User | string = await this.findUser(email);
-    let result = false;
-    if (typeof user === "object") {
-      if (type === ReqEnum.REQ_TYPE_LOCAL && password !== undefined) {
-        result = await bcrypt.compare(password, user.password);
-      } else if (type === ReqEnum.REQ_TYPE_KAKAO) {
-        result = true;
-      }
+  ): Promise<string> {
+    const user: User | string = (await this.findUser(email)) as User;
+    let login = false;
+
+    if (type === ReqEnum.REQ_TYPE_LOCAL && password !== undefined) {
+      login = await bcrypt.compare(password, user.password);
+    } else if (type === ReqEnum.REQ_TYPE_KAKAO) {
+      login = true;
     }
-    return result;
+    if (login) {
+      return await this.generateToken(user);
+    } else {
+      throw new Error(ResEnum.RES_NO_USER);
+    }
   }
 
   async generateToken(user: User): Promise<string> {
