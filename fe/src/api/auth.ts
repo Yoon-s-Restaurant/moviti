@@ -1,6 +1,5 @@
 import movitiApi from './config';
-import { SignUpPayload } from '../components/signUp/types';
-import { SignInPayload } from '../components/signIn/types';
+import { SignInPayload, SignUpPayload, UserData } from '../types';
 
 export const registerUserWithKaKao = async ({ queryKey }: any) => {
   const [_, { authCode }] = queryKey;
@@ -10,7 +9,7 @@ export const registerUserWithKaKao = async ({ queryKey }: any) => {
 
 // accessToken 가지고... 유저 정보 가져오기
 export const fetchUser = async () => {
-  const { data } = await movitiApi.get('/auth/user', {
+  const { data } = await movitiApi.get<UserData>('/auth/user', {
     headers: {
       Authorization: localStorage.getItem('token') || '',
     },

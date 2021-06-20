@@ -1,6 +1,5 @@
-import { SignUpPayload } from '../components/signUp/types';
 import Regex from './regex';
-import { SignInPayload } from '../components/signIn/types';
+import { SignInPayload, SignUpPayload } from '../types';
 
 const validateSignUpPayload = ({ name, email, password }: SignUpPayload) => {
   const isValidName = validateName(name);

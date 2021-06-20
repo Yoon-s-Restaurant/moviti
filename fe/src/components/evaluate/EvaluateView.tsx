@@ -7,6 +7,7 @@ import { useCallback, useState } from 'react';
 import { useQuery } from 'react-query';
 import { fetchUser, registerUserWithKaKao, signInUser } from '../../api/auth';
 import { fetchEvalMovie } from '../../api/movie';
+import { UserData } from '../../types';
 
 interface Movie {
   id: number;
@@ -17,14 +18,10 @@ interface EvaluatedMovie {
   score: number;
 }
 
-const EvaluateView = () => {
-  const {
-    isLoading: isUserLoading,
-    isError: isUserError,
-    data: userData,
-    error: userError,
-  } = useQuery('fetchUser', fetchUser);
-
+interface EvaluateViewProps {
+  userData: UserData;
+}
+const EvaluateView = ({ userData }: EvaluateViewProps) => {
   const [selected, setSelected] = useState(0);
 
   const [movieData, setMovieData] = useState<Movie[]>();
@@ -53,11 +50,11 @@ const EvaluateView = () => {
     error,
   } = useQuery('movies', fetchEvalMovie);
 
-  if (isUserLoading || isMoviesLoading) {
+  if (isMoviesLoading) {
     return <div>Loading...</div>;
   }
 
-  if (isUserError || isMoviesError) {
+  if (isMoviesError) {
     return <span>Error: message</span>;
   }
   return (

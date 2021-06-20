@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import SignUpForm from './SignUpForm';
 import { useCallback, useState } from 'react';
 import { useMutation } from 'react-query';
-import { SignUpPayload } from './types';
 import { signUpUser } from '../../api/auth';
+import { SignUpPayload } from '../../types';
 
 const SignUpView = () => {
   const mutation = useMutation((signUpData: SignUpPayload) =>

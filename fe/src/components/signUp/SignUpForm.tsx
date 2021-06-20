@@ -4,9 +4,9 @@ import { Input } from '../common/input';
 import { Button } from '../common/button';
 import styled from 'styled-components';
 import useInput from '../../hooks/useInput';
-import { useCallback, useState } from 'react';
-import { SignUpPayload } from './types';
+import { useCallback } from 'react';
 import { validateSignUpPayload } from '../../utils';
+import { SignUpPayload } from '../../types';
 
 interface SignUpFormProps {
   handleSignUp: ({ email, name, password }: SignUpPayload) => void;

@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { fetchUser, signInUser } from '../../api/auth';
 import { Redirect } from 'react-router';
-import { SignInPayload } from './types';
+import { SignInPayload } from '../../types';
 
 declare global {
   interface Window {
@@ -17,10 +17,10 @@ declare global {
 
 const SignInView = () => {
   const {
-    isLoading: isUserLoading,
-    isError: isUserError,
+    // isLoading: isUserLoading,
+    // isError: isUserError,
     data: userData,
-    error: userError,
+    // error: userError,
     refetch,
   } = useQuery('fetchUser', fetchUser, {
     retry: false,
@@ -39,7 +39,11 @@ const SignInView = () => {
 
   const mutation = useMutation('signIn', {
     onMutate: (signInData: SignInPayload) => signInUser(signInData),
-    onSuccess: (data, variables, context) => refetch(),
+    onSuccess: (data: { token: string }, __, ___) => {
+      localStorage.setItem('token', data.token);
+      return refetch();
+    },
+    onError: () => console.log('hihihi'),
   });
 
   const handleSignIn = ({ email, password }: SignInPayload) => {

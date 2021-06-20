@@ -5,8 +5,8 @@ import { Button } from '../common/button';
 import { Input } from '../common/input';
 import Label from '../common/input/Label';
 import { useCallback, useState } from 'react';
-import { SignInPayload } from './types';
 import { validateSignInPayload } from '../../utils';
+import { SignInPayload } from '../../types';
 
 interface SignInFormProps {
   handleSignIn: ({ email, password }: SignInPayload) => void;
