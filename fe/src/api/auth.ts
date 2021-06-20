@@ -1,5 +1,11 @@
 import movitiApi from './config';
-import { SignInPayload, SignUpPayload, UserData, UserPayload } from '../types';
+import {
+  SignInPayload,
+  SignUpData,
+  SignUpPayload,
+  UserData,
+  UserPayload,
+} from '../types';
 
 export const registerUserWithKaKao = async ({ queryKey }: any) => {
   const [_, { authCode }] = queryKey;
@@ -18,7 +24,7 @@ export const fetchUser = async () => {
 };
 // 로그인?
 export const signInUser = ({ email, password }: SignInPayload) =>
-  movitiApi.post('/auth/login', {
+  movitiApi.post<SignUpData>('/auth/login', {
     email,
     password,
   });

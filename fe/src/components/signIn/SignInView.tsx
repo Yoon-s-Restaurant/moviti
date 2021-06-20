@@ -38,12 +38,12 @@ const SignInView = () => {
   }, []);
 
   const mutation = useMutation('signIn', {
-    onMutate: (signInData: SignInPayload) => signInUser(signInData),
-    onSuccess: (data: { token: string }, __, ___) => {
+    mutationFn: (signInData: SignInPayload) => signInUser(signInData),
+    onSuccess: ({ data }, __, ___) => {
       localStorage.setItem('token', data.token);
+      console.log('success????');
       return refetch();
     },
-    onError: () => console.log('hihihi'),
   });
 
   const handleSignIn = ({ email, password }: SignInPayload) => {
@@ -51,6 +51,7 @@ const SignInView = () => {
   };
 
   if (userData) {
+    console.log(userData);
     return <Redirect to={'/evaluate'} />;
   }
 
